@@ -1,56 +1,124 @@
 {
-  "openapi":"3.0.1",
-  "info":{
-    "description":"",
-    "title":"",
-    "version":"1.0.0"
+  "openapi": "3.0.1",
+  "info": {
+    "description": "This API will provide simple rotation and flip operations",
+    "version": "1.0.0",
+    "title": "Picture Rotation and Flips",
+    "termsOfService": "https://market-place.ai.ovh.net/#!/cgu-en",
+    "contact": {
+      "name": "API Support",
+      "url": "https://gitter.im/ovh/ai"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://github.com/jqueguiner/image-basic-processing/blob/master/LICENSE"
+    }
   },
-  "tags":[
+  "host": "api-market-place.ai.ovh.net",
+  "basePath": "/",
+  "tags": [
     {
-      "name":"detect or process or ...",
-      "description":""
+      "name": "image transformation",
+      "description": "Everything you need for basic image transformations",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "https://bit.ly/330vz2s"
+      }
+    },
+    {
+      "name": "rotate",
+      "description": "Rotate your image"
+    },
+    {
+      "name": "flip",
+      "description": "Flip your image"
     }
   ],
-  "paths":{
-    "/detect or process or ...":{
-      "post":{
-        "security":[
+  "paths": {
+    "/rotate": {
+      "post": {
+        "security": [
           {
-            "apikey":[
-
-            ]
+            "apikey": []
           }
         ],
-        "tags":[
-          "detect or process or ..."
+        "tags": [
+          "rotate"
         ],
-        "summary":"",
-        "description":"",
-        "operationId":"detect or process or ...",
-        "responses":{
-          "401":{
-            "description":"Unauthorized"
-          },
-          "200":{
-            "content":{
-              "application/json":{
-                "schema":{
-                  "type":"array",
-                  "items":{
-                    "$ref":"#/components/schemas/Response"
-                  }
+        "summary": "Rotate your image of the desired angle",
+        "description": "Rotate image",
+        "operationId": "rotate",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/jpg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }
+          },
+          "400": {
+            "description": "input error"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         },
-        "requestBody":{
-          "description":"",
-          "required":true,
-          "content":{
-            "application/json":{
-              "schema":{
-                "$ref":"#/components/schemas/Body"
+        "requestBody": {
+          "description": "Rotate the given picture of the desired angle",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RotateBody"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/flip": {
+      "post": {
+        "security": [
+          {
+            "apikey": []
+          }
+        ],
+        "tags": [
+          "flip"
+        ],
+        "summary": "Flip your image horizontally or vertically",
+        "description": "Flip your image horizontally or vertically",
+        "operationId": "flip",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/jpg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "input error"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "requestBody": {
+          "description": "Flip the given picture",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlipBody"
               }
             }
           }
@@ -58,21 +126,57 @@
       }
     }
   },
-  "components":{
-    "securitySchemes":{
-      "apikey":{
-        "type":"apiKey",
-        "name":"X-OVH-Api-Key",
-        "in":"header"
+  "components": {
+    "securitySchemes": {
+      "apikey": {
+        "type": "apiKey",
+        "name": "X-OVH-Api-Key",
+        "in": "header"
       }
     },
-    "schemas":{
-      SCHEMA
+    "schemas": {
+      "RotateBody": {
+        "type": "object",
+        "required": [
+          "url",
+          "angle",
+          "cropping"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "example": "https://i.ibb.co/pPPwSdq/Picture1.png"
+          },
+          "angle": {
+            "type": "integer",
+            "format": "int32",
+            "example": 30
+          },
+          "cropping": {
+            "type": "boolean",
+            "example": false
+          }
+        }
       },
-      "Response":{
-        "type":"object",
-        "properties":{
-          RESPONSE_PROPERTIES
+      "FlipBody": {
+        "type": "object",
+        "required": [
+          "url",
+          "mode"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "example": "https://i.ibb.co/pPPwSdq/Picture1.png"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "horizontal",
+              "vertical"
+            ],
+            "example": "horizontal"
+          }
         }
       }
     }

@@ -1,37 +1,35 @@
 openapi: 3.0.1
 info:
-  description: This API will provide simple rotation and flip operations
+  description: This API will transform a selfie into a anime manga character
   version: 1.0.0
-  title: Picture Rotation and Flips
+  title: Selfie2Anime
   termsOfService: 'https://market-place.ai.ovh.net/#!/cgu-en'
   contact:
     name: API Support
     url: 'https://gitter.im/ovh/ai'
   license:
     name: MIT
-    url: 'https://github.com/jqueguiner/image-basic-processing/blob/master/LICENSE'
+    url: 'https://github.com/jqueguiner/selfie2anime/blob/master/LICENSE'
 host: api-market-place.ai.ovh.net
 basePath: /
 tags:
-  - name: image transformation
-    description: Everything you need for basic image transformations
+  - name: selfie2anime
+    description: Everything you need to transform a selfie into a anime manga character
     externalDocs:
       description: Find out more
-      url: 'https://bit.ly/330vz2s'
-  - name: rotate
-    description: Rotate your image
-  - name: flip
-    description: Flip your image
+      url: 'https://bit.ly/'
+  - name: process
+    description: Transform selfie into anime
 paths:
-  /rotate:
+  /process:
     post:
       security:
         - apikey: []
       tags:
-        - rotate
-      summary: Rotate your image of the desired angle
-      description: Rotate image
-      operationId: rotate
+        - process
+      summary: Transform selfie into anime
+      description: Process image
+      operationId: process
       responses:
         '200':
           description: OK
@@ -45,40 +43,12 @@ paths:
         '401':
           description: Unauthorized
       requestBody:
-        description: Rotate the given picture of the desired angle
+        description: Transform selfie into anime
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RotateBody'
-  /flip:
-    post:
-      security: 
-        - apikey: []
-      tags: 
-        - flip
-      summary: Flip your image horizontally or vertically
-      description: Flip your image horizontally or vertically
-      operationId: flip
-      responses:
-        '200':
-          description: OK
-          content:
-            image/jpg:
-              schema:
-                type: string
-                format: binary
-        '400':
-          description: input error
-        '401':
-          description: Unauthorized
-      requestBody:
-        description: Flip the given picture
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FlipBody'
+              $ref: '#/components/schemas/Process'
 components:
   securitySchemes:
     apikey:
@@ -86,36 +56,11 @@ components:
       name: X-OVH-Api-Key
       in: header
   schemas:
-    RotateBody:
+    Process:
       type: object
       required:
         - url
-        - angle
-        - cropping
       properties:
         url:
           type: string
-          example: 'https://i.ibb.co/pPPwSdq/Picture1.png'
-        angle:
-          type: integer
-          format: int32
-          example: 30
-        cropping:
-          type: boolean
-          example: false
-    FlipBody:
-      type: object
-      required:
-        - url
-        - mode
-      properties:
-        url:
-          type: string
-          example: 'https://i.ibb.co/pPPwSdq/Picture1.png'
-        mode:
-          type: string
-          enum : [
-                    "horizontal",
-                    "vertical"
-                  ]
-          example: horizontal
+          example: 'https://i.ibb.co/QkqCMXT/input.jpg'
