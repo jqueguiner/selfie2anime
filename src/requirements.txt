@@ -4,4 +4,5 @@ requests
 flask
 opencv-python
 Pillow
-unrar
+patool
+pyunpack

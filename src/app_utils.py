@@ -9,7 +9,7 @@ import skimage
 from skimage.filters import gaussian
 
 import zipfile
-from unrar import rarfile
+from pyunpack import Archive
 from PIL import Image
 import matplotlib.image as mpimg
 import cv2
@@ -75,9 +75,8 @@ def unzip(path_to_zip_file, directory_to_extract_to='.'):
         zip_ref.extractall(directory_to_extract_to)
 
 
-def unrar(path_to_rar_file, directory_to_extract_to=None):
-    rar = rarfile.RarFile(path_to_rar_file)
-    rar.extractall(path)
+def unrar(path_to_rar_file, directory_to_extract_to='.'):
+    Archive(path_to_rar_file).extractall(directory_to_extract_to)
 
 
 def resize_img_in_folder(path, w, h):

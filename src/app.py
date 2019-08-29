@@ -176,7 +176,7 @@ if __name__ == '__main__':
 
     url_prefix = 'http://pretrained-models.auth-18b62333a540498882ff446ab602528b.storage.gra5.cloud.ovh.net/image/ugatit/selfie2anime/'
 
-    models_rar = 'UGATIT_selfie2anime_lsgan_4resblock_6dis_1_1_10_10_1000_sn_smoothing.rar'
+    model_file_rar = 'UGATIT_selfie2anime_lsgan_4resblock_6dis_1_1_10_10_1000_sn_smoothing.rar'
 
     get_model_bin(url_prefix + model_file_rar , os.path.join('/src', model_file_rar))
     unrar(model_file_rar)
