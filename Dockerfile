@@ -1,5 +1,9 @@
 FROM guignol95/ai_apis:latest
 
+RUN apt-get update -y
+
+RUN apt-get install unrar -y
+
 ADD src /src
 
 WORKDIR /src

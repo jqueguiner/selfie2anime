@@ -9,9 +9,11 @@ import skimage
 from skimage.filters import gaussian
 
 import zipfile
+from unrar import rarfile
 from PIL import Image
 import matplotlib.image as mpimg
 import cv2
+
 
 def blur(image, x0, x1, y0, y1, sigma=1, multichannel=True):
     y0, y1 = min(y0, y1), max(y0, y1)
@@ -73,6 +75,11 @@ def unzip(path_to_zip_file, directory_to_extract_to='.'):
         zip_ref.extractall(directory_to_extract_to)
 
 
+def unrar(path_to_rar_file, directory_to_extract_to=None):
+    rar = rarfile.RarFile(path_to_rar_file)
+    rar.extractall(path)
+
+
 def resize_img_in_folder(path, w, h):
     dirs = os.listdir(path)
     for item in dirs:
@@ -81,6 +88,7 @@ def resize_img_in_folder(path, w, h):
             f, e = os.path.splitext(path+item)
             imResize = im.resize((w, h), Image.ANTIALIAS)
             imResize.save(f + '.jpg', 'JPEG', quality=90)
+
 
 def resize_img(path, w, h):
     img = mpimg.imread(path)

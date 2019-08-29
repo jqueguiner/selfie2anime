@@ -22,6 +22,7 @@ from app_utils import create_directory
 from app_utils import get_model_bin
 from app_utils import get_multi_model_bin
 from app_utils import unzip
+from app_utils import unrar
 from app_utils import resize_img
 
 
@@ -175,13 +176,10 @@ if __name__ == '__main__':
 
     url_prefix = 'http://pretrained-models.auth-18b62333a540498882ff446ab602528b.storage.gra5.cloud.ovh.net/image/ugatit/selfie2anime/'
 
-    model_file_zip = 'ugatit-selfie2anime-pretrained.zip'
+    models_rar = 'UGATIT_selfie2anime_lsgan_4resblock_6dis_1_1_10_10_1000_sn_smoothing.rar'
 
-
-    get_model_bin(url_prefix + model_file_zip , os.path.join('/src', model_file_zip))
-
-
-    unzip(model_file_zip)
+    get_model_bin(url_prefix + model_file_rar , os.path.join('/src', model_file_rar))
+    unrar(model_file_rar)
 
     args = parse_args()
 
