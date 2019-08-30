@@ -179,7 +179,7 @@ if __name__ == '__main__':
     model_file_rar = 'UGATIT_selfie2anime_lsgan_4resblock_6dis_1_1_10_10_1000_sn_smoothing.rar'
 
     get_model_bin(url_prefix + model_file_rar , os.path.join('/src', model_file_rar))
-    unrar(model_file_rar)
+    unrar(model_file_rar, model_directory)
 
     args = parse_args()
 
