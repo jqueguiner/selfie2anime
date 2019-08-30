@@ -24,6 +24,7 @@ from app_utils import get_multi_model_bin
 from app_utils import unzip
 from app_utils import unrar
 from app_utils import resize_img
+from app_utils import square_center_crop
 
 
 from UGATIT import UGATIT
@@ -130,6 +131,9 @@ def process():
 
         download(url, input_path)
 
+
+        square_center_crop(input_path, input_path)
+
         with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
             gan = UGATIT(sess, args)
 
@@ -178,8 +182,8 @@ if __name__ == '__main__':
 
     model_file_rar = 'UGATIT_selfie2anime_lsgan_4resblock_6dis_1_1_10_10_1000_sn_smoothing.rar'
 
-    get_model_bin(url_prefix + model_file_rar , os.path.join('/src', model_file_rar))
-    unrar(model_file_rar, model_directory)
+    #get_model_bin(url_prefix + model_file_rar , os.path.join('/src', model_file_rar))
+    #unrar(model_file_rar, model_directory)
 
     args = parse_args()
 

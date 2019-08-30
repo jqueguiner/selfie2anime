@@ -94,3 +94,22 @@ def resize_img(path, w, h):
     img = cv2.resize(img, dsize=(w, h))
     return img
 
+
+def square_center_crop(image_path, output_path):
+    im = Image.open(image_path)
+    width, height = im.size   # Get dimensions
+
+    new_width = min(width, height)
+    new_height = new_width
+    
+    left = (width - new_width)/2
+    top = (height - new_height)/2
+    right = (width + new_width)/2
+    bottom = (height + new_height)/2
+
+    # Crop the center of the image
+    im = im.crop((left, top, right, bottom))
+
+    im.save(image_path, "PNG")
+
+
