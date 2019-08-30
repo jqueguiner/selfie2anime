@@ -49,7 +49,7 @@ def parse_args():
     desc = "Tensorflow implementation of U-GAT-IT"
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument('--phase', type=str, default='test', help='[train / test]')
-    parser.add_argument('--light', type=str2bool, default=True, help='[U-GAT-IT full version / U-GAT-IT light version]')
+    parser.add_argument('--light', type=str2bool, default=False, help='[U-GAT-IT full version / U-GAT-IT light version]')
     parser.add_argument('--dataset', type=str, default='selfie2anime', help='dataset_name')
 
     parser.add_argument('--epoch', type=int, default=100, help='The number of epochs to run')
@@ -178,7 +178,7 @@ if __name__ == '__main__':
 
     model_file_rar = 'UGATIT_selfie2anime_lsgan_4resblock_6dis_1_1_10_10_1000_sn_smoothing.rar'
 
-    get_model_bin(url_prefix + model_file_rar , os.path.join('/src', model_file_rar))
+    #get_model_bin(url_prefix + model_file_rar , os.path.join('/src', model_file_rar))
     unrar(model_file_rar)
 
     args = parse_args()
