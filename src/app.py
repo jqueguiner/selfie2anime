@@ -25,6 +25,8 @@ from app_utils import unzip
 from app_utils import unrar
 from app_utils import resize_img
 from app_utils import square_center_crop
+from app_utils import square_center_crop
+from app_utils import image_crop
 
 
 from UGATIT import UGATIT
@@ -33,6 +35,9 @@ from utils import *
 import matplotlib.image as mpimg
 import numpy as np
 from skimage import io, exposure, img_as_uint, img_as_float
+import face_recognition
+from PIL import *
+
 
 try:  # Python 3.5+
     from http import HTTPStatus
@@ -131,9 +136,40 @@ def process():
 
         download(url, input_path)
 
+        image = face_recognition.load_image_file(input_path)
 
-        square_center_crop(input_path, input_path)
+        face_locations = face_recognition.face_locations(image)
 
+        face_location = face_locations[0]
+
+        y1 = face_location[0]
+        x1 = face_location[1]
+        y2 = face_location[2]
+        x2 = face_location[3]
+
+
+        im = Image.open(input_path)
+        width, height = im.size
+
+
+        face_width = min(abs(x2-x1) * 1.5, width)
+        face_height = min(abs(y1-y2) * 1.5, height)
+
+
+        square_crop_dim = max(face_width, face_height)
+
+        mid_x = x1 + face_width/2
+        mid_y = y1 + face_height/2
+
+        x1 = mid_x - square_crop_dim/2
+        x2 = mid_x + square_crop_dim/2
+
+        y1 = mid_y - square_crop_dim/2
+        y2 = mid_y + square_crop_dim/2
+
+        image_crop(input_path, input_path, x1, y1, x2, y2)
+
+        
         with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
             gan = UGATIT(sess, args)
 
@@ -182,8 +218,8 @@ if __name__ == '__main__':
 
     model_file_rar = 'UGATIT_selfie2anime_lsgan_4resblock_6dis_1_1_10_10_1000_sn_smoothing.rar'
 
-    get_model_bin(url_prefix + model_file_rar , os.path.join('/src', model_file_rar))
-    unrar(model_file_rar, model_directory)
+    #get_model_bin(url_prefix + model_file_rar , os.path.join('/src', model_file_rar))
+    #unrar(model_file_rar, model_directory)
 
     args = parse_args()
 
