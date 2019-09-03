@@ -2,7 +2,8 @@ FROM guignol95/ai_apis:latest
 
 RUN apt-get update -y
 
-RUN apt-get install unrar -y
+RUN apt-get install -y unrar \
+		language-pack-en
 
 ADD src /src
 

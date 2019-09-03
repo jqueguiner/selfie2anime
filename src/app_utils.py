@@ -3,6 +3,7 @@ import requests
 import random
 import _thread as thread
 from uuid import uuid4
+import urllib.parse as urlparse
 
 import numpy as np
 import skimage
@@ -58,8 +59,11 @@ def create_directory(path):
 def get_model_bin(url, output_path):
     if not os.path.exists(output_path):
         create_directory(output_path)
-        cmd = "wget -O %s %s" % (output_path, url)
-        os.system(cmd)
+        filename, ext = os.path.splitext(os.path.basename(urlparse.urlsplit(url).path))
+        if not os.path.exists(os.path.join(output_path, filename, ext)):
+            print("downloading model :" + filename + ext)
+            cmd = "wget -O %s %s" % (output_path, url)
+            os.system(cmd)
 
     return output_path
 
@@ -71,11 +75,13 @@ def get_multi_model_bin(model_list):
 
 
 def unzip(path_to_zip_file, directory_to_extract_to='.'):
+    print("deflating model :" + path_to_zip_file)
     with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
         zip_ref.extractall(directory_to_extract_to)
 
 
 def unrar(path_to_rar_file, directory_to_extract_to='.'):
+    print("deflating model :" + path_to_rar_file)
     Archive(path_to_rar_file).extractall(directory_to_extract_to)
 
 
@@ -109,7 +115,7 @@ def square_center_crop(image_path, output_path):
 
 
 
-def image_crop(image_path, output_path, x1, y1, x2, y2):
+def image_crop(image_path, output_path, x0, y0, x1, y1):
     """
     The syntax is the following:
     cropped = img.crop( ( x, y, x + width , y + height ) )
@@ -119,10 +125,12 @@ def image_crop(image_path, output_path, x1, y1, x2, y2):
     Note: x + width and y + height are the bottom right coordinate of the cropped region.
     """
     
-    im = Image.open(image_path)
+    image = cv2.imread(image_path)
 
-    im = im.crop((x1, y1, x2, y2))
+    print(x0, y0, x1, y1)
+    crop = image[y0:y1, x0:x1]
 
-    im.save(image_path, "PNG")
+    print(crop)
 
+    cv2.imwrite(output_path, crop)
 

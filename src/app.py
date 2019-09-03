@@ -51,6 +51,39 @@ except ImportError:
 app = Flask(__name__)
 
 
+class FaceCropper(object):
+    CASCADE_PATH = "haarcascade_frontalface_default.xml"
+
+    def __init__(self):
+        self.face_cascade = cv2.CascadeClassifier(self.CASCADE_PATH)
+
+    def generate(self, image_path, output_path, padding, show_result):
+        img = cv2.imread(image_path)
+        if (img is None):
+            print("Can't open image file")
+            return 0
+
+        #img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        faces = self.face_cascade.detectMultiScale(img, 1.1, 3, minSize=(100, 100))
+        if (faces is None):
+            print('Failed to detect face')
+            return 0
+
+        height, width = img.shape[:2]
+
+        (x, y, w, h) = faces[0]
+        r = min((max(w, h) / 2)*(100+padding)/100, width, height)
+        centerx = x + w / 2
+        centery = y + h / 2
+        nx = int(centerx - r)
+        ny = int(centery - r)
+        nr = int(r * 2)
+
+        faceimg = img[ny:ny+nr, nx:nx+nr]
+        lastimg = cv2.resize(faceimg, (256, 256))
+        cv2.imwrite(output_path, lastimg)
+
+
 def parse_args():
     desc = "Tensorflow implementation of U-GAT-IT"
     parser = argparse.ArgumentParser(description=desc)
@@ -136,48 +169,14 @@ def process():
 
         download(url, input_path)
 
-        image = face_recognition.load_image_file(input_path)
+        try:
+            detecter = FaceCropper()
+            detecter.generate(input_path, input_path, 60, False)
+        except:
+            pass
 
-        face_locations = face_recognition.face_locations(image)
-
-        face_location = face_locations[0]
-
-        y1 = face_location[0]
-        x1 = face_location[1]
-        y2 = face_location[2]
-        x2 = face_location[3]
-
-
-        im = Image.open(input_path)
-        width, height = im.size
-
-
-        face_width = min(abs(x2-x1) * 1.5, width)
-        face_height = min(abs(y1-y2) * 1.5, height)
-
-
-        square_crop_dim = max(face_width, face_height)
-
-        mid_x = x1 + face_width/2
-        mid_y = y1 + face_height/2
-
-        x1 = mid_x - square_crop_dim/2
-        x2 = mid_x + square_crop_dim/2
-
-        y1 = mid_y - square_crop_dim/2
-        y2 = mid_y + square_crop_dim/2
-
-        image_crop(input_path, input_path, x1, y1, x2, y2)
-
-        
-        with tf.Session(config=tf.ConfigProto(allow_soft_placement=True)) as sess:
-            gan = UGATIT(sess, args)
-
-            gan.build_model()
-
-            gan.test_endpoint_init()
            
-            gan.test_endpoint(input_path, output_path)
+        gan.test_endpoint(input_path, output_path)
 
 
         callback = send_file(output_path, mimetype='image/jpeg')
@@ -199,6 +198,7 @@ if __name__ == '__main__':
     global upload_directory
     global model_directory
     global args
+    global gan
 
     result_directory = '/src/results/'
     create_directory(result_directory)
@@ -218,13 +218,25 @@ if __name__ == '__main__':
 
     model_file_rar = 'UGATIT_selfie2anime_lsgan_4resblock_6dis_1_1_10_10_1000_sn_smoothing.rar'
 
-    #get_model_bin(url_prefix + model_file_rar , os.path.join('/src', model_file_rar))
-    #unrar(model_file_rar, model_directory)
+    haarcascade_file = 'haarcascade_frontalface_default.xml'
 
+    get_model_bin(url_prefix + model_file_rar , os.path.join('/src', model_file_rar))
+    unrar(model_file_rar, model_directory)
+
+    get_model_bin(url_prefix + haarcascade_file,  os.path.join('/src', haarcascade_file))
+    
     args = parse_args()
+    
+    sess = tf.InteractiveSession(config=tf.ConfigProto(allow_soft_placement=True, inter_op_parallelism_threads=1))
+
+    gan = UGATIT(sess, args)
+    gan.build_model()
+
+    gan.test_endpoint_init()
+
 
     port = 5000
     host = '0.0.0.0'
 
-    app.run(host=host, port=port, threaded=True)
+    app.run(host=host, port=port, threaded=False)
 
