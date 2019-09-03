@@ -35,7 +35,6 @@ from utils import *
 import matplotlib.image as mpimg
 import numpy as np
 from skimage import io, exposure, img_as_uint, img_as_float
-import face_recognition
 from PIL import *
 
 

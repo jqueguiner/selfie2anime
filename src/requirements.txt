@@ -6,4 +6,3 @@ opencv-python
 Pillow
 patool
 pyunpack
-face_recognition
