@@ -35,6 +35,7 @@ from utils import *
 import matplotlib.image as mpimg
 import numpy as np
 from skimage import io, exposure, img_as_uint, img_as_float
+import face_recognition
 from PIL import *
 
 
@@ -51,7 +52,7 @@ app = Flask(__name__)
 
 
 class FaceCropper(object):
-    CASCADE_PATH = "haarcascade_frontalface_default.xml"
+    CASCADE_PATH = "/src/haarcascade_frontalface_default.xml"
 
     def __init__(self):
         self.face_cascade = cv2.CascadeClassifier(self.CASCADE_PATH)
@@ -170,11 +171,37 @@ def process():
 
         try:
             detecter = FaceCropper()
-            detecter.generate(input_path, input_path, 60, False)
+            detecter.generate(input_path, input_path, 20, False)
+            #
+            print("face_crop")
         except:
-            pass
+            im = Image.open(input_path)
+            
+            width, height = im.size
 
-           
+            print(im.size)
+            center_x = width/2
+            center_y = height/2
+
+            box_size = min(width, height)
+
+            print(box_size)
+            left = center_x - box_size/2
+            top = center_y - box_size/2
+            width = box_size
+            height = box_size
+          
+            box = (left, top, left + width, top + height)
+
+            area = im.crop(box)
+
+            area = im.convert("RGB")
+
+            area.save(input_path, "JPEG", quality=80, optimize=True, progressive=True)
+            print("image_crop")
+
+
+
         gan.test_endpoint(input_path, output_path)
 
 
@@ -213,16 +240,16 @@ if __name__ == '__main__':
     create_directory(model_directory)
 
 
-    url_prefix = 'http://pretrained-models.auth-18b62333a540498882ff446ab602528b.storage.gra5.cloud.ovh.net/image/ugatit/selfie2anime/'
+    url_prefix = 'http://pretrained-models.auth-18b62333a540498882ff446ab602528b.storage.gra5.cloud.ovh.net/image/'
 
     model_file_rar = 'UGATIT_selfie2anime_lsgan_4resblock_6dis_1_1_10_10_1000_sn_smoothing.rar'
 
     haarcascade_file = 'haarcascade_frontalface_default.xml'
 
-    get_model_bin(url_prefix + model_file_rar , os.path.join('/src', model_file_rar))
-    unrar(model_file_rar, model_directory)
+    get_model_bin(url_prefix + "ugatit/selfie2anime/" + model_file_rar , os.path.join('/src', model_file_rar))
+    #unrar(model_file_rar, model_directory)
 
-    get_model_bin(url_prefix + haarcascade_file,  os.path.join('/src', haarcascade_file))
+    get_model_bin(url_prefix + "haarcascade/" + haarcascade_file,  os.path.join('/src', haarcascade_file))
     
     args = parse_args()
     
