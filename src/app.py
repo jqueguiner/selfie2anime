@@ -247,7 +247,7 @@ if __name__ == '__main__':
     haarcascade_file = 'haarcascade_frontalface_default.xml'
 
     get_model_bin(url_prefix + "ugatit/selfie2anime/" + model_file_rar , os.path.join('/src', model_file_rar))
-    #unrar(model_file_rar, model_directory)
+    unrar(model_file_rar, model_directory)
 
     get_model_bin(url_prefix + "haarcascade/" + haarcascade_file,  os.path.join('/src', haarcascade_file))
     
