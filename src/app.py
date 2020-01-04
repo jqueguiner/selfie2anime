@@ -51,6 +51,10 @@ except ImportError:
 app = Flask(__name__)
 
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 class FaceCropper(object):
     CASCADE_PATH = "/src/haarcascade_frontalface_default.xml"
 
@@ -165,9 +169,14 @@ def process():
     output_path = generate_random_filename(result_directory,"jpg")
 
     try:
-        url = request.json["url"]
-
-        download(url, input_path)
+        if 'file' in request.files:
+            file = request.files['file']
+            if allowed_file(file.filename):
+                file.save(input_path)
+            
+        else:
+            url = request.json["url"]
+            download(url, input_path)
 
         try:
             detecter = FaceCropper()
@@ -225,6 +234,8 @@ if __name__ == '__main__':
     global model_directory
     global args
     global gan
+    global ALLOWED_EXTENSIONS
+    ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
     result_directory = '/src/results/'
     create_directory(result_directory)
